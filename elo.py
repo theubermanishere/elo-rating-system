@@ -4,7 +4,7 @@
 competitions
 """
 
-from math import pow
+from math import pow, floor, ceil
 
 WIN = 1
 LOSS = 0
@@ -21,20 +21,22 @@ class Elo:
         self.k = k
 
     def expectancy(self, b):
+        """ Calculate self win expectancy against an opponent. """
         exp = 1 / (1 + pow(10, (b - self.rank) / 400))
         return exp
 
     def winsAgainst(self, b):
-        self.rank = self.rank + self.k * (WIN - self.expectancy(b.rank))
-        b.rank = b.rank + self.k * (LOSS - b.expectancy(self.rank))
+        """ Calculates and changes rank of both self and opponent. """
+        self.rank = self.rank + floor(self.k * (WIN - self.expectancy(b.rank)))
+        b.rank = b.rank + floor(self.k * (LOSS - b.expectancy(self.rank)))
 
     def loseAgainst(self, b):
-        self.rank = self.rank + self.k * (LOSS - self.expectancy(b.rank))
-        b.rank = b.rank + self.k * (WIN - b.expectancy(self.rank))
+        self.rank = self.rank + floor(self.k * (LOSS - self.expectancy(b.rank)))
+        b.rank = b.rank + floor(self.k * (WIN - b.expectancy(self.rank)))
 
     def drawAgainst(self, b):
-        self.rank = self.rank + self.k * (DRAW - self.expectancy(b.rank))
-        b.rank = b.rank + self.k * (DRAW - b.expectancy(self.rank))
+        self.rank = self.rank + floor(self.k * (DRAW - self.expectancy(b.rank)))
+        b.rank = b.rank + floor(self.k * (DRAW - b.expectancy(self.rank)))
 
 if __name__ == "__main__":
     a = Elo(1300)
